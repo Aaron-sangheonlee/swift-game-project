@@ -14,6 +14,7 @@ class ViewController: UIViewController {
     let subview = UIView()
     let background = UIImageView()
     
+    //시작 버튼 클릭 시
     @objc func startButtonDidTap(){
         let moveToGame = storyboard?.instantiateViewController(withIdentifier: "GameViewController") as! GameViewController
         self.navigationController?.pushViewController(moveToGame, animated: true)
@@ -21,7 +22,7 @@ class ViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        //시작 버튼 addTarget
         startButton.addTarget(self, action: #selector(startButtonDidTap), for: .touchUpInside)
         //MARK: transparent NavigationBar
         self.navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
@@ -35,7 +36,7 @@ class ViewController: UIViewController {
         self.view.addSubview(subview)
         self.subview.addSubview(background)
         self.view.bringSubviewToFront(startButton)
-        
+        //시작 버튼 꾸미기
         startButton.setTitle("시작", for: .normal)
         startButton.titleLabel?.font = UIFont(name: "system", size: 20)
         startButton.setTitleColor(.white, for: .normal)

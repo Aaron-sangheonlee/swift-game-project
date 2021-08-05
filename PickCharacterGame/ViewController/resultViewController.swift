@@ -6,20 +6,11 @@
 //
 
 import UIKit
-
+//프로토콜 선언
 protocol endGameDelegate {
     func endGame()
     }
-
-
 class resultViewController: UIViewController {
-    
-    var delegate : endGameDelegate?
-    var prevViewController : GameViewController?
-    var subview = UIView()
-    var background = UIImageView()
-    var resultBoard = UIImageView()
-    
     
     @IBOutlet weak var firstLabel: UILabel!
     @IBOutlet weak var resultLabel: UILabel!
@@ -30,47 +21,81 @@ class resultViewController: UIViewController {
     @IBAction func retryButtonAction(_ sender: UIButton) {
         performSegue(withIdentifier: "unwindToGameView", sender: self)
     }
-    var timeResult: String = ""
-    var resultTitle: String = ""
-    var resultContent: String = ""
+    
+    //데이터 전달 위한 delgate 선언
+    var delegate : endGameDelegate?
+    //subview 변수 선언
+    var subview = UIView()
+    //imageview 선언
+    var background = UIImageView()
+    var resultBoard = UIImageView()
+    var timeResult: String = "a"
+    var resultTitle: String = "a"
+    var resultContent: String = "a"
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
-                
-        if timeResult == "시간 초과" { return }
-        else if Int(timeResult)! >= 60 {
-            let mins = Int(timeResult)! / 60
-            let secs = Int(timeResult)! - (mins*60)
-            timeResult = "\(mins): \(secs)"
-            resultLabel.text = String(timeResult)
-        } else{ return }
         
+        //subview 추가
         self.view.addSubview(subview)
-        subview.frame = CGRect(x: 0, y: 0, width: 1000, height: 1000)
+        self.subview.frame = CGRect(x: 0, y: 0, width: 1000, height: 1000)
+        
+        //background subview 추가
         self.subview.addSubview(background)
-        background.image = UIImage(named: "backGround")
-        background.alpha = 0.5
-        background.frame = CGRect(x: 0, y: 0, width: 390, height: 844)
+        self.background.frame = CGRect(x: 0, y: 0, width: 390, height: 844)
+        
+        //background 이미지 추가
+        self.background.image = UIImage(named: "backGround")
+        self.background.alpha = 0.3
+        
+        //stackview, button 가장 앞으로
         self.view.bringSubviewToFront(resultStackView)
         self.view.bringSubviewToFront(retryButton)
         
-//        resultStackView.backgroundColor = .systemYellow
-//        resultStackView.layer.cornerRadius = 20
-//        resultStackView.layer.borderWidth = 5
-//        resultStackView.layer.borderColor = UIColor.orange.cgColor
+        self.resultStackView.backgroundColor = .systemYellow
+        self.resultStackView.layer.cornerRadius = 20
+        self.resultStackView.layer.borderWidth = 5
+        self.resultStackView.layer.borderColor = UIColor.orange.cgColor
         
-        resultLabel.text = timeResult
-        firstLabel.text = resultTitle
-        thirdLabel.text = resultContent
-        resultLabel.font = UIFont(name: "system", size: 25)
-        resultLabel.textColor = .blue
-        firstLabel.font = UIFont(name: "system", size: 20)
-        thirdLabel.font = UIFont(name: "system", size: 15)
+        //time 초 -> 분, 초
+        if timeResult == "시간 초과ㅠㅠ" {
+            self.firstLabel.text = resultTitle
+            self.resultLabel.text = timeResult
+            self.thirdLabel.text = resultContent
+        }
+        else if Int(timeResult)! >= 60 {
+            let mins = Int(timeResult)! / 60
+            let secs = Int(timeResult)! - (mins*60)
+            if secs >= 10 {
+            timeResult = "\(mins): \(secs)"
+            self.resultLabel.text = String(timeResult)
+            } else {
+                timeResult = "\(mins):0\(secs)"
+                self.resultLabel.text = String(timeResult)
+            }
+        } else{
+            self.resultLabel.text = timeResult
+        }
+        //label text 받아오기
+        self.firstLabel.text = resultTitle
+        self.thirdLabel.text = resultContent
         
-        retryButton.setTitle("다시하기", for: .normal)
-        retryButton.titleLabel?.font = UIFont(name: "system", size: 20)
-        retryButton.setTitleColor(.white, for: .normal)
-        retryButton.backgroundColor = .orange
-        retryButton.layer.cornerRadius = 30
+        //라벨 자동 줄 조절
+        self.thirdLabel.numberOfLines = 4
+        self.thirdLabel.lineBreakMode = NSLineBreakMode.byWordWrapping
+        
+        //label UI 수정
+        self.resultLabel.font = UIFont.systemFont(ofSize: 25)
+        self.resultLabel.textColor = .blue
+        self.firstLabel.font = UIFont.systemFont(ofSize: 20)
+        self.thirdLabel.font = UIFont.systemFont(ofSize: 15)
+
+        //button UI 수정
+        self.retryButton.setTitle("다시하기", for: .normal)
+        self.retryButton.titleLabel?.font = UIFont(name: "system", size: 20)
+        self.retryButton.setTitleColor(.white, for: .normal)
+        self.retryButton.backgroundColor = .orange
+        self.retryButton.layer.cornerRadius = 30
     }
 }

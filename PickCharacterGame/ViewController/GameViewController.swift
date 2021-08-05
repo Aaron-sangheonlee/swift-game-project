@@ -53,14 +53,14 @@ class GameViewController: UIViewController {
         } else if gameTimer <= 0 {
             moveToResult.resultTitle = "실패...ㅠ"
             moveToResult.resultContent = "다시 한번 더 해보자! 화이팅!"
-            moveToResult.timeResult = "시간 초과"
-        }
+            moveToResult.timeResult = "시간 초과ㅠㅠ"
+        } else { return }
     }
     //MARK: 점수 100점 획득 시 게임 종료 / resultVC 띄우는 performSegue
     func endGame() {
-        if score == 100 || gameTimer == 0 {
+        if score == 100 {
             performSegue(withIdentifier: "moveToResult", sender: self)
-        } else { return }
+        }
     }
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -89,7 +89,7 @@ class GameViewController: UIViewController {
         self.subview.addSubview(timerLabel)
         timerLabel.frame = CGRect(x: 280, y: 80, width: 100, height: 80)
         timerLabel.textColor = .white
-        timerLabel.font = UIFont(name: "system", size: 50)
+        timerLabel.font = UIFont.systemFont(ofSize: 40)
         timerLabel.backgroundColor = .systemYellow
         timerLabel.layer.borderWidth = 5
         timerLabel.layer.borderColor = UIColor.orange.cgColor
@@ -100,7 +100,7 @@ class GameViewController: UIViewController {
         self.subview.addSubview(scoreLabel)
         scoreLabel.frame = CGRect(x: 10, y: 80, width: 100, height: 80)
         scoreLabel.textColor = .white
-        scoreLabel.font = UIFont(name: "system", size: 50)
+        scoreLabel.font = UIFont.systemFont(ofSize: 40)
         scoreLabel.backgroundColor = .systemYellow
         scoreLabel.layer.borderWidth = 5
         scoreLabel.layer.borderColor = UIColor.orange.cgColor
@@ -114,7 +114,6 @@ class GameViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         print("viewDidAppear")
     }
-    
     override func viewWillAppear(_ animated: Bool) {
         //MARK: dispatchquoue 이용한 background timer
         DispatchQueue.global(qos: .background).async {
@@ -175,25 +174,35 @@ class GameViewController: UIViewController {
         print(gameTimer)
         print("viewWillAppear")
     }
+    
+    func timerEnd() {
+        if gameTimer == 0 {
+            self.timer.invalidate()
+            performSegue(withIdentifier: "moveToResult", sender: self)
+        }
+    }
+    
     //MARK: 타이머 함수 선언
     @objc func startTimer() {
         gameTimer -= 1
         if score >= 100 || gameTimer == 0 {
             self.timer.invalidate()
         }
-        DispatchQueue.main.async {
-            self.endGame()
-        }
         DispatchQueue
             .main.async {
                 if self.gameTimer >= 60 {
                     let mins = self.gameTimer / 60
                     let secs = self.gameTimer - (mins*60)
-                    let time = "\(mins) : \(secs)"
-                    self.timerLabel.text = String(time)
+                    if secs >= 10 {
+                        let time = "\(mins):\(secs)"
+                        self.timerLabel.text = String(time)
+                    } else {
+                        let time = "\(mins):0\(secs)"
+                        self.timerLabel.text = String(time)}
                 } else{
                     self.timerLabel.text = String(self.gameTimer)
                 }
+                self.timerEnd()
             }
     }
     //MARK: 버튼 클릭 시마다 점수 업데이트
